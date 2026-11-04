@@ -1,0 +1,18 @@
+@font-face { font-family: B; src: url(../../../app/static/fonts/bricolage-grotesque-latin-800-normal.woff2); font-weight: 800; }
+@font-face { font-family: B; src: url(../../../app/static/fonts/bricolage-grotesque-latin-600-normal.woff2); font-weight: 600; }
+@font-face { font-family: P; src: url(../../../app/static/fonts/public-sans-latin-400-normal.woff2); }
+@font-face { font-family: M; src: url(../../../app/static/fonts/jetbrains-mono-latin-400-normal.woff2); }
+html,body{margin:0;width:1920px;height:1080px;overflow:hidden}
+body{background:#DCE3EB;color:#14213D;font-family:P;display:flex;align-items:center;justify-content:center;
+ background-image:repeating-radial-gradient(circle at 0 0,transparent 0 30px,rgba(20,33,61,.04) 30px 31px),repeating-radial-gradient(circle at 100% 100%,transparent 0 30px,rgba(20,33,61,.04) 30px 31px)}
+.wrap{max-width:1440px;padding:0 80px}
+.eyebrow{font:20px M;letter-spacing:.12em;text-transform:uppercase;color:#4A5A78;margin:0 0 28px}
+h1{font:800 96px/1.02 B;letter-spacing:-.02em;margin:0}
+h2{font:600 56px/1.15 B;margin:28px 0 0;color:#4A5A78}
+p.big{font:34px/1.45 P;margin:36px 0 0;color:#14213D;max-width:1200px}
+.stamp{display:inline-block;font:800 54px/1 B;letter-spacing:.08em;padding:14px 26px 10px;border:7px double currentColor;border-radius:12px;transform:rotate(-8deg);margin-left:24px;vertical-align:middle}
+.ok{color:#1F7A4D}.hold{color:#B7791F}.no{color:#B42318}
+.mono{font-family:M;font-size:28px;color:#4A5A78;margin-top:44px}
+img.arch{width:1760px;display:block;margin:30px auto 0;border-radius:14px;box-shadow:0 20px 50px -25px rgba(20,33,61,.5)}
+.pills{display:flex;gap:18px;justify-content:center;margin-top:36px}
+.pill{font:26px M;border:2px solid #14213D;border-radius:99px;padding:12px 24px;background:#F6F8FA}
