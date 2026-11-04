@@ -40,6 +40,7 @@ CREATE TABLE IF NOT EXISTS decisions (
     paypal_capture_id TEXT
 );
 CREATE INDEX IF NOT EXISTS ix_decisions_created ON decisions(created_at);
+CREATE TABLE IF NOT EXISTS kv (key TEXT PRIMARY KEY, value TEXT NOT NULL);
 """
 
 _INITIAL_STATUS = {Outcome.APPROVE: "approved", Outcome.HOLD: "held", Outcome.BLOCK: "blocked"}
@@ -93,6 +94,27 @@ class Ledger:
             )
             self._conn.commit()
         return self.get(entry_id)
+
+    def attach_order(self, entry_id: int, paypal_order_id: str) -> None:
+        """Remember the PayPal order created for an approved entry (no status change)."""
+        with self._lock:
+            n = self._conn.execute(
+                "UPDATE decisions SET paypal_order_id=?, updated_at=? WHERE id=? AND status IN ('approved','failed')",
+                (paypal_order_id, _utcnow().isoformat(), entry_id)).rowcount
+            self._conn.commit()
+        if n == 0:
+            raise InvalidTransition(f"entry {entry_id} is not approved")
+
+    def kv_get(self, key: str) -> Optional[str]:
+        with self._lock:
+            row = self._conn.execute("SELECT value FROM kv WHERE key=?", (key,)).fetchone()
+        return row[0] if row else None
+
+    def kv_set(self, key: str, value: str) -> None:
+        with self._lock:
+            self._conn.execute("INSERT INTO kv(key,value) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+                               (key, value))
+            self._conn.commit()
 
     def set_explanation(self, entry_id: int, text: str) -> None:
         with self._lock:
