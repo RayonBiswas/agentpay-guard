@@ -1,0 +1,3 @@
+# Optional: run AgentPay Guard as an MCP server (python -m mcp_server.agentpay_mcp)
+-r requirements.txt
+mcp>=2.0,<3

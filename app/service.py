@@ -162,6 +162,42 @@ class GuardService:
             raise ServiceError(f"Refund failed: {e}", 502) from e
         return self.ledger.set_status(entry_id, "cancelled")
 
+    def handle_webhook(self, event: dict[str, Any]) -> dict[str, Any]:
+        """Reconcile ledger state from PayPal events (e.g. the browser closed before capture returned).
+
+        Only moves entries forward along valid transitions and checks the amount.
+        """
+        etype = event.get("event_type", "")
+        res = event.get("resource") or {}
+        if etype not in ("PAYMENT.CAPTURE.COMPLETED", "PAYMENT.CAPTURE.REFUNDED"):
+            return {"handled": False, "reason": f"ignored {etype or 'unknown'}"}
+        custom = res.get("custom_id")
+        order_id = (res.get("supplementary_data") or {}).get("related_ids", {}).get("order_id")
+        try:
+            entry = self.ledger.get(int(custom))
+        except (TypeError, ValueError, KeyError):
+            return {"handled": False, "reason": "no matching purchase"}
+        if order_id and entry["paypal_order_id"] and order_id != entry["paypal_order_id"]:
+            return {"handled": False, "reason": "order id mismatch"}
+        if etype == "PAYMENT.CAPTURE.COMPLETED":
+            if entry["status"] == "paid":
+                return {"handled": True, "entry_id": entry["id"], "status": "paid", "note": "already paid"}
+            try:
+                cents = int(round(float(res["amount"]["value"]) * 100))
+            except (KeyError, TypeError, ValueError):
+                return {"handled": False, "reason": "missing amount"}
+            if cents != entry["total_cents"]:
+                return {"handled": False, "reason": "amount mismatch"}
+            if entry["status"] != "approved":
+                return {"handled": False, "reason": f"purchase is {entry['status']}"}
+            e = self.ledger.set_status(entry["id"], "paid", paypal_order_id=order_id, paypal_capture_id=res.get("id"))
+            return {"handled": True, "entry_id": e["id"], "status": e["status"]}
+        # refund
+        if entry["status"] == "paid":
+            e = self.ledger.set_status(entry["id"], "cancelled")
+            return {"handled": True, "entry_id": e["id"], "status": e["status"]}
+        return {"handled": True, "entry_id": entry["id"], "status": entry["status"], "note": "no change"}
+
     def sim_approve(self, order_id: str) -> dict[str, Any]:
         if not isinstance(self.paypal, SimPayPal):
             raise ServiceError("only available in sim mode", 404)

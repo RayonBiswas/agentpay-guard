@@ -1,0 +1,688 @@
+{
+  "info": {
+    "name": "AgentPay Guard API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Spending guardrails for AI shopping agents, paid through PayPal. Start the server, then run the folders in order."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "agentKey",
+      "value": ""
+    },
+    {
+      "key": "entryId",
+      "value": "1"
+    },
+    {
+      "key": "orderId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Setup",
+      "item": [
+        {
+          "name": "Health",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Agent-Key",
+                "value": "{{agentKey}}",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "health"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Catalogue",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Agent-Key",
+                "value": "{{agentKey}}",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/catalog",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "catalog"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Current policy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Agent-Key",
+                "value": "{{agentKey}}",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/policy",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "policy"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Compile rules (preview, not saved)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Agent-Key",
+                "value": "{{agentKey}}",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/rules/compile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "rules",
+                "compile"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"Max $50 per item and $100 per order. Weekly budget $150. Ask me before anything over $20. No gaming.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Save policy",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Agent-Key",
+                "value": "{{agentKey}}",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/policy",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "policy"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"policy\": {\n    \"per_item_max_cents\": 5000,\n    \"per_order_max_cents\": 10000,\n    \"budgets\": [\n      {\n        \"period\": \"week\",\n        \"limit_cents\": 15000\n      }\n    ],\n    \"ask_above_cents\": 2000,\n    \"blocked_categories\": [\n      \"gaming\"\n    ]\n  },\n  \"rules_text\": \"demo\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Agents",
+      "item": [
+        {
+          "name": "Chat agent: approve",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Agent-Key",
+                "value": "{{agentKey}}",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/chat",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "chat"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Buy me a USB-C cable and a notebook\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const j = pm.response.json();",
+                  "const e = j.entry || j;",
+                  "if (e && e.id) pm.collectionVariables.set('entryId', e.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Chat agent: hold",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Agent-Key",
+                "value": "{{agentKey}}",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/chat",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "chat"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Get a desk lamp\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const j = pm.response.json();",
+                  "const e = j.entry || j;",
+                  "if (e && e.id) pm.collectionVariables.set('entryId', e.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Chat agent: block",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Agent-Key",
+                "value": "{{agentKey}}",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/chat",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "chat"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Buy noise cancelling headphones\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const j = pm.response.json();",
+                  "const e = j.entry || j;",
+                  "if (e && e.id) pm.collectionVariables.set('entryId', e.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "External agent intent",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Agent-Key",
+                "value": "{{agentKey}}",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/intents",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "intents"
+              ]
+            },
+            "description": "For other agents. Enable the X-Agent-Key header if AGENT_API_KEY is set.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": \"esp32-board\",\n      \"quantity\": 2\n    }\n  ],\n  \"agent\": \"autobasket\",\n  \"reason\": \"restock\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const j = pm.response.json();",
+                  "const e = j.entry || j;",
+                  "if (e && e.id) pm.collectionVariables.set('entryId', e.id);"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3. Approvals & PayPal",
+      "item": [
+        {
+          "name": "Approve held purchase",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Agent-Key",
+                "value": "{{agentKey}}",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/entries/{{entryId}}/approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "entries",
+                "{{entryId}}",
+                "approve"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Reject held purchase",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Agent-Key",
+                "value": "{{agentKey}}",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/entries/{{entryId}}/reject",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "entries",
+                "{{entryId}}",
+                "reject"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Create PayPal order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Agent-Key",
+                "value": "{{agentKey}}",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/entries/{{entryId}}/paypal/order",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "entries",
+                "{{entryId}}",
+                "paypal",
+                "order"
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set('orderId', pm.response.json().order_id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Simulated buyer approval (sim mode)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Agent-Key",
+                "value": "{{agentKey}}",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/sim/paypal/{{orderId}}/approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "sim",
+                "paypal",
+                "{{orderId}}",
+                "approve"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Capture PayPal order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Agent-Key",
+                "value": "{{agentKey}}",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/entries/{{entryId}}/paypal/capture",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "entries",
+                "{{entryId}}",
+                "paypal",
+                "capture"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order_id\": \"{{orderId}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Refund",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Agent-Key",
+                "value": "{{agentKey}}",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/entries/{{entryId}}/refund",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "entries",
+                "{{entryId}}",
+                "refund"
+              ]
+            },
+            "description": ""
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Ledger",
+      "item": [
+        {
+          "name": "Ledger",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Agent-Key",
+                "value": "{{agentKey}}",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ledger",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ledger"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Held only",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Agent-Key",
+                "value": "{{agentKey}}",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ledger?status=held",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ledger"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "held"
+                }
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "One purchase",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Agent-Key",
+                "value": "{{agentKey}}",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/entries/{{entryId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "entries",
+                "{{entryId}}"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Budget",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Agent-Key",
+                "value": "{{agentKey}}",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/budget",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "budget"
+              ]
+            },
+            "description": ""
+          }
+        }
+      ]
+    }
+  ]
+}

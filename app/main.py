@@ -150,6 +150,23 @@ def create_app(settings: Optional[Settings] = None, llm: Optional[LLMClient] = N
     def refund(entry_id: int) -> dict[str, Any]:
         return svc.refund(entry_id)
 
+    @app.post("/api/paypal/webhook")
+    async def paypal_webhook(request: Request) -> JSONResponse:
+        """PayPal webhook listener. In sandbox mode every event must pass PayPal's signature check."""
+        try:
+            event = await request.json()
+        except ValueError:
+            raise HTTPException(400, "body must be JSON")
+        if paypal.mode == "sandbox":
+            webhook_id = os.getenv("PAYPAL_WEBHOOK_ID", "")
+            if not webhook_id:
+                raise HTTPException(503, "set PAYPAL_WEBHOOK_ID to accept webhooks")
+            if not paypal.verify_webhook(dict(request.headers), event, webhook_id):
+                raise HTTPException(401, "webhook signature verification failed")
+        elif os.getenv("SIM_WEBHOOKS", "on") != "on":
+            raise HTTPException(404, "webhooks disabled")
+        return JSONResponse(svc.handle_webhook(event))
+
     @app.post("/api/sim/paypal/{order_id}/approve")
     def sim_approve(order_id: str) -> dict[str, Any]:
         return svc.sim_approve(order_id)

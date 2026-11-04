@@ -1,0 +1,30 @@
+# One-click deploy on Render (https://render.com). Free web service, simulation mode by default.
+services:
+  - type: web
+    name: agentpay-guard
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: PAYPAL_MODE
+        value: sim            # set to "sandbox" and add the two keys below for real PayPal
+      - key: PAYPAL_CLIENT_ID
+        sync: false
+      - key: PAYPAL_CLIENT_SECRET
+        sync: false
+      - key: PAYPAL_WEBHOOK_ID
+        sync: false
+      - key: LLM_BASE_URL     # any OpenAI-compatible endpoint; leave empty for the rule parser only
+        sync: false
+      - key: LLM_MODEL
+        sync: false
+      - key: LLM_API_KEY
+        sync: false
+      - key: DB_PATH
+        value: /tmp/agentpay.db
+      - key: AUTOPAY
+        value: "off"          # judges see the PayPal checkout step

@@ -142,6 +142,26 @@ class SandboxPayPal:
     def refund_capture(self, capture_id, request_id):
         return self._call("POST", f"/v2/payments/captures/{capture_id}/refund", request_id, {})
 
+    def verify_webhook(self, headers: dict[str, str], event: dict[str, Any], webhook_id: str) -> bool:
+        """Ask PayPal to verify a webhook signature (no local cert handling needed)."""
+        h = {k.lower(): v for k, v in headers.items()}
+        body = {
+            "auth_algo": h.get("paypal-auth-algo", ""),
+            "cert_url": h.get("paypal-cert-url", ""),
+            "transmission_id": h.get("paypal-transmission-id", ""),
+            "transmission_sig": h.get("paypal-transmission-sig", ""),
+            "transmission_time": h.get("paypal-transmission-time", ""),
+            "webhook_id": webhook_id,
+            "webhook_event": event,
+        }
+        if not all(body[k] for k in ("auth_algo", "cert_url", "transmission_id", "transmission_sig", "transmission_time")):
+            return False
+        try:
+            r = self._call("POST", "/v1/notifications/verify-webhook-signature", None, body)
+        except PayPalError:
+            return False
+        return r.get("verification_status") == "SUCCESS"
+
 
 def _safe_json(r: httpx.Response) -> Any:
     try:
