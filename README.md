@@ -96,7 +96,8 @@ Tools: `search_catalog`, `request_purchase`, `check_budget`, `purchase_status`. 
 ## Tests
 
 ```bash
-pytest -q          # 110 passed
+pytest -q                                   # 106 passed (MCP tests skip without the extra)
+pip install -r requirements-mcp.txt && pytest -q   # 110 passed
 ```
 
 The tests cover every policy rule and edge (exact limits, merged duplicate lines, quiet hours across midnight, budget windows in the user's timezone), the LLM paths with a fake model (invalid JSON, hallucinated IDs, attempts to inject prices), the PayPal sandbox client against mocked HTTP (OAuth caching, idempotency headers, error wrapping), the simulator lifecycle, the full API story, webhooks (signature, replay, amount and order mismatch), and the MCP tools end-to-end against the real app. The UI was driven in Chromium with Playwright, and the screenshots above come from those runs.
