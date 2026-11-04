@@ -1,0 +1,27 @@
+flowchart LR
+    U(["You<br/>plain-English rules"]) --> RC["Rule compiler<br/><i>LLM → JSON</i><br/>+ regex fallback"]
+    RC -->|"you confirm"| P[("Policy<br/>limits · budgets<br/>categories · quiet hours")]
+
+    C(["Chat"]) --> AG["Shopping agent<br/><i>LLM picks products</i><br/>+ keyword fallback"]
+    X(["Any AI agent<br/>MCP · REST"]) --> API
+    AG --> API["Purchase intent<br/>product IDs + qty only"]
+
+    API --> PE{{"Policy engine<br/><b>plain code decides</b><br/>prices from catalogue"}}
+    P --> PE
+    L[("Ledger<br/>SQLite audit log")] -->|"spend so far"| PE
+
+    PE -->|APPROVE| PP["PayPal Orders v2<br/>create → approve → capture"]
+    PE -->|HOLD| H["Approvals<br/>you approve or reject"]
+    H -->|"re-check, then approve"| PP
+    PE -->|BLOCK| L
+    PP -->|"order + capture IDs"| L
+    WH(["PayPal webhooks<br/>signature-verified"]) --> L
+
+    classDef ai fill:#EEF2FF,stroke:#4A5A78,color:#14213D
+    classDef code fill:#14213D,stroke:#14213D,color:#FFFFFF
+    classDef pay fill:#E8F5EE,stroke:#1F7A4D,color:#14213D
+    classDef hold fill:#FFF4D6,stroke:#B7791F,color:#14213D
+    class RC,AG ai
+    class PE code
+    class PP,WH pay
+    class H hold

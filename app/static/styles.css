@@ -141,6 +141,9 @@ h2 { font: 600 18px/1.2 var(--display); margin: 0 0 6px; }
 .slip-empty-title { font: 600 18px var(--display); color: var(--ink); margin: 0 0 6px; }
 .slip-head { padding-right: 190px; display: flex; flex-direction: column; gap: 2px; justify-content: space-between; gap: 12px; border-bottom: 1px dashed var(--ink-soft); padding-bottom: 10px; margin-bottom: 10px; }
 .slip-head .no { font-weight: 700; }
+.slip-head span { white-space: nowrap; }
+.slips .slip-head { padding-right: 150px; }
+.slips .stamp { font-size: 22px; }
 .slip-lines { width: 100%; border-collapse: collapse; }
 .slip-lines td { padding: 3px 0; vertical-align: top; }
 .slip-lines td.num { text-align: right; white-space: nowrap; padding-left: 12px; }
