@@ -1,0 +1,326 @@
+[
+ {
+  "id": "usb-c-cable",
+  "name": "USB-C to USB-C cable 1m",
+  "category": "electronics",
+  "merchant": "VoltMart",
+  "price_cents": 999,
+  "tags": [
+   "cable",
+   "usb",
+   "charger"
+  ]
+ },
+ {
+  "id": "usb-c-charger",
+  "name": "20W USB-C wall charger",
+  "category": "electronics",
+  "merchant": "VoltMart",
+  "price_cents": 1899,
+  "tags": [
+   "charger",
+   "usb"
+  ]
+ },
+ {
+  "id": "wireless-mouse",
+  "name": "Wireless mouse",
+  "category": "electronics",
+  "merchant": "VoltMart",
+  "price_cents": 1450,
+  "tags": [
+   "mouse",
+   "computer"
+  ]
+ },
+ {
+  "id": "mech-keyboard",
+  "name": "Mechanical keyboard",
+  "category": "electronics",
+  "merchant": "VoltMart",
+  "price_cents": 6900,
+  "tags": [
+   "keyboard",
+   "computer"
+  ]
+ },
+ {
+  "id": "anc-headphones",
+  "name": "Noise-cancelling headphones",
+  "category": "electronics",
+  "merchant": "VoltMart",
+  "price_cents": 29900,
+  "tags": [
+   "headphones",
+   "audio"
+  ]
+ },
+ {
+  "id": "earbuds",
+  "name": "Wired earbuds",
+  "category": "electronics",
+  "merchant": "VoltMart",
+  "price_cents": 1200,
+  "tags": [
+   "earphones",
+   "audio"
+  ]
+ },
+ {
+  "id": "power-bank",
+  "name": "10000mAh power bank",
+  "category": "electronics",
+  "merchant": "VoltMart",
+  "price_cents": 2499,
+  "tags": [
+   "battery",
+   "charger"
+  ]
+ },
+ {
+  "id": "hdmi-cable",
+  "name": "HDMI cable 2m",
+  "category": "electronics",
+  "merchant": "VoltMart",
+  "price_cents": 799,
+  "tags": [
+   "cable",
+   "hdmi"
+  ]
+ },
+ {
+  "id": "sd-card",
+  "name": "64GB microSD card",
+  "category": "electronics",
+  "merchant": "VoltMart",
+  "price_cents": 1150,
+  "tags": [
+   "storage",
+   "memory"
+  ]
+ },
+ {
+  "id": "esp32-board",
+  "name": "ESP32 dev board",
+  "category": "electronics",
+  "merchant": "CircuitHub",
+  "price_cents": 650,
+  "tags": [
+   "esp32",
+   "microcontroller",
+   "maker"
+  ]
+ },
+ {
+  "id": "arduino-nano",
+  "name": "Arduino Nano clone",
+  "category": "electronics",
+  "merchant": "CircuitHub",
+  "price_cents": 520,
+  "tags": [
+   "arduino",
+   "microcontroller",
+   "maker"
+  ]
+ },
+ {
+  "id": "jumper-wires",
+  "name": "Jumper wire kit (120 pcs)",
+  "category": "electronics",
+  "merchant": "CircuitHub",
+  "price_cents": 450,
+  "tags": [
+   "wires",
+   "maker"
+  ]
+ },
+ {
+  "id": "breadboard",
+  "name": "830-point breadboard",
+  "category": "electronics",
+  "merchant": "CircuitHub",
+  "price_cents": 399,
+  "tags": [
+   "maker"
+  ]
+ },
+ {
+  "id": "a5-notebook",
+  "name": "A5 ruled notebook",
+  "category": "stationery",
+  "merchant": "PaperTrail",
+  "price_cents": 450,
+  "tags": [
+   "notebook",
+   "paper"
+  ]
+ },
+ {
+  "id": "gel-pens",
+  "name": "Gel pens (pack of 5)",
+  "category": "stationery",
+  "merchant": "PaperTrail",
+  "price_cents": 350,
+  "tags": [
+   "pen"
+  ]
+ },
+ {
+  "id": "sticky-notes",
+  "name": "Sticky notes (4 pads)",
+  "category": "stationery",
+  "merchant": "PaperTrail",
+  "price_cents": 299,
+  "tags": [
+   "notes",
+   "paper"
+  ]
+ },
+ {
+  "id": "desk-planner",
+  "name": "Weekly desk planner",
+  "category": "stationery",
+  "merchant": "PaperTrail",
+  "price_cents": 1299,
+  "tags": [
+   "planner",
+   "paper"
+  ]
+ },
+ {
+  "id": "highlighters",
+  "name": "Highlighters (6 colours)",
+  "category": "stationery",
+  "merchant": "PaperTrail",
+  "price_cents": 499,
+  "tags": [
+   "pen"
+  ]
+ },
+ {
+  "id": "coffee-beans",
+  "name": "Coffee beans 500g",
+  "category": "groceries",
+  "merchant": "FreshCart",
+  "price_cents": 1350,
+  "tags": [
+   "coffee"
+  ]
+ },
+ {
+  "id": "green-tea",
+  "name": "Green tea (50 bags)",
+  "category": "groceries",
+  "merchant": "FreshCart",
+  "price_cents": 599,
+  "tags": [
+   "tea"
+  ]
+ },
+ {
+  "id": "oat-milk",
+  "name": "Oat milk 1L",
+  "category": "groceries",
+  "merchant": "FreshCart",
+  "price_cents": 349,
+  "tags": [
+   "milk"
+  ]
+ },
+ {
+  "id": "protein-bars",
+  "name": "Protein bars (box of 12)",
+  "category": "groceries",
+  "merchant": "FreshCart",
+  "price_cents": 2199,
+  "tags": [
+   "snack"
+  ]
+ },
+ {
+  "id": "rice-5kg",
+  "name": "Basmati rice 5kg",
+  "category": "groceries",
+  "merchant": "FreshCart",
+  "price_cents": 1599,
+  "tags": [
+   "rice",
+   "staple"
+  ]
+ },
+ {
+  "id": "led-bulb",
+  "name": "LED bulb 9W (pack of 2)",
+  "category": "home",
+  "merchant": "HomeNest",
+  "price_cents": 699,
+  "tags": [
+   "light"
+  ]
+ },
+ {
+  "id": "desk-lamp",
+  "name": "LED desk lamp",
+  "category": "home",
+  "merchant": "HomeNest",
+  "price_cents": 2799,
+  "tags": [
+   "light",
+   "lamp"
+  ]
+ },
+ {
+  "id": "water-bottle",
+  "name": "Steel water bottle 1L",
+  "category": "home",
+  "merchant": "HomeNest",
+  "price_cents": 1499,
+  "tags": [
+   "bottle"
+  ]
+ },
+ {
+  "id": "smart-plug",
+  "name": "Wi-Fi smart plug",
+  "category": "home",
+  "merchant": "HomeNest",
+  "price_cents": 1599,
+  "tags": [
+   "smart",
+   "plug"
+  ]
+ },
+ {
+  "id": "game-giftcard",
+  "name": "Game store gift card $50",
+  "category": "gaming",
+  "merchant": "PixelPlay",
+  "price_cents": 5000,
+  "tags": [
+   "giftcard",
+   "games"
+  ]
+ },
+ {
+  "id": "controller",
+  "name": "Wireless game controller",
+  "category": "gaming",
+  "merchant": "PixelPlay",
+  "price_cents": 5499,
+  "tags": [
+   "controller",
+   "games"
+  ]
+ },
+ {
+  "id": "movie-rental",
+  "name": "Movie rental (48h)",
+  "category": "gaming",
+  "merchant": "PixelPlay",
+  "price_cents": 399,
+  "tags": [
+   "movie",
+   "streaming"
+  ]
+ }
+]
