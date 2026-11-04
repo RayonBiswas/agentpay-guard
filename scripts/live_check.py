@@ -70,10 +70,41 @@ def check_paypal() -> bool:
     return True
 
 
+PREFERRED = ["lfm2.5:8b-toolfix", "qwen2.5:7b", "llama3.1:8b", "qwen2.5:3b", "llama3.2:3b"]
+ENV = Path(__file__).resolve().parents[1] / ".env"
+
+
+def autodetect_model(base_url: str) -> str:
+    """Pick an installed Ollama model when LLM_MODEL=auto, and save the choice to .env."""
+    import httpx
+    root = base_url.rstrip("/").removesuffix("/v1")
+    try:
+        names = [m["name"] for m in httpx.get(f"{root}/api/tags", timeout=10).json().get("models", [])]
+    except Exception as e:
+        print(f"{BAD} Can't reach Ollama at {root}: is the Ollama app running? ({type(e).__name__})")
+        return ""
+    if not names:
+        print(f"{BAD} Ollama has no models. Run: ollama pull llama3.2:3b")
+        return ""
+    chosen = next((p for p in PREFERRED if p in names), names[0])
+    print(f"   Installed models: {', '.join(names)}")
+    print(f"   Using {chosen}")
+    if ENV.exists():
+        lines = ENV.read_text().splitlines()
+        lines = [f"LLM_MODEL={chosen}" if l.startswith("LLM_MODEL=") else l for l in lines]
+        ENV.write_text("\n".join(lines) + "\n")
+    return chosen
+
+
 def check_llm() -> bool:
     s = get_settings()
     print("\n== LLM ==")
-    llm = LLMClient(s.llm_base_url, s.llm_model, s.llm_api_key, timeout=120)
+    model = s.llm_model
+    if model.lower() == "auto":
+        model = autodetect_model(s.llm_base_url)
+        if not model:
+            return False
+    llm = LLMClient(s.llm_base_url, model, s.llm_api_key, timeout=180)
     if not llm.enabled:
         print(f"{BAD} LLM_BASE_URL / LLM_MODEL not set in .env")
         return False
