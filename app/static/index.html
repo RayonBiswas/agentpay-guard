@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AgentPay Guard: your agent shops, your rules decide</title>
+  <meta name="description" content="Spending guardrails for AI shopping agents, paid through PayPal.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='13' fill='none' stroke='%231F7A4D' stroke-width='3'/><path d='M10 16.5l4 4 8-9' fill='none' stroke='%231F7A4D' stroke-width='3'/></svg>">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <div>
+        <h1>AgentPay Guard</h1>
+        <p class="tagline">Your agent shops. Your rules decide.</p>
+      </div>
+    </div>
+    <div class="meter" id="meter" aria-live="polite"></div>
+    <div class="chips">
+      <span class="chip" id="chip-paypal" title="PayPal mode">PayPal: …</span>
+      <span class="chip" id="chip-llm" title="Language model">AI: …</span>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Sections">
+    <button role="tab" aria-selected="true" data-tab="agent" id="tab-agent">Agent</button>
+    <button role="tab" aria-selected="false" data-tab="rules" id="tab-rules">Rules</button>
+    <button role="tab" aria-selected="false" data-tab="approvals" id="tab-approvals">Approvals <span class="badge" id="held-count" hidden>0</span></button>
+    <button role="tab" aria-selected="false" data-tab="ledger" id="tab-ledger">Ledger</button>
+  </nav>
+
+  <main>
+    <!-- AGENT -->
+    <section class="panel" id="panel-agent" role="tabpanel" aria-labelledby="tab-agent">
+      <div class="agent-grid">
+        <div class="chat card">
+          <div class="chat-log" id="chat-log" aria-live="polite">
+            <div class="msg bot">Tell me what to buy. I'll find it in the catalogue, then your rules decide whether it goes through.</div>
+          </div>
+          <div class="suggestions" id="suggestions">
+            <button type="button" data-say="Buy me a USB-C cable and a notebook">USB-C cable + notebook</button>
+            <button type="button" data-say="Get a desk lamp">Desk lamp</button>
+            <button type="button" data-say="Buy noise cancelling headphones">Headphones</button>
+            <button type="button" data-say="Get a $50 game gift card">Game gift card</button>
+          </div>
+          <form class="chat-form" id="chat-form" autocomplete="off">
+            <label for="chat-input" class="sr-only">Message the shopping agent</label>
+            <input id="chat-input" name="message" placeholder="e.g. get 3 oat milk and two gel pens" maxlength="1000" required>
+            <button type="submit" class="btn primary">Send</button>
+          </form>
+        </div>
+        <div class="slip-stage" id="slip-stage">
+          <div class="slip empty">
+            <p class="slip-empty-title">No purchase yet</p>
+            <p>Each purchase your agent attempts prints here, checked against every rule you've set.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RULES -->
+    <section class="panel" id="panel-rules" role="tabpanel" aria-labelledby="tab-rules" hidden>
+      <div class="rules-grid">
+        <div class="card">
+          <h2>Your rules, in your words</h2>
+          <p class="hint">Write them the way you'd tell a person. The AI turns them into exact limits, and nothing is saved until you check and confirm them.</p>
+          <label for="rules-text" class="sr-only">Spending rules</label>
+          <textarea id="rules-text" rows="7"></textarea>
+          <div class="row">
+            <button class="btn primary" id="compile-btn" type="button">Turn into limits</button>
+            <span class="muted" id="compile-status"></span>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Limits the agent must follow</h2>
+          <p class="hint" id="limits-caption">These are the limits in force now.</p>
+          <dl class="limits" id="limits"></dl>
+          <div class="row">
+            <button class="btn primary" id="save-btn" type="button" hidden>Save these limits</button>
+            <button class="btn ghost" id="discard-btn" type="button" hidden>Discard</button>
+            <span class="muted" id="save-status"></span>
+          </div>
+          <details class="raw">
+            <summary>Show as JSON</summary>
+            <pre id="policy-json"></pre>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- APPROVALS -->
+    <section class="panel" id="panel-approvals" role="tabpanel" aria-labelledby="tab-approvals" hidden>
+      <div class="slips" id="approvals"></div>
+    </section>
+
+    <!-- LEDGER -->
+    <section class="panel" id="panel-ledger" role="tabpanel" aria-labelledby="tab-ledger" hidden>
+      <div class="card">
+        <div class="table-wrap">
+          <table class="ledger">
+            <thead><tr><th>#</th><th>Time</th><th>Agent</th><th>Items</th><th class="num">Total</th><th>Verdict</th><th>Status</th><th>PayPal order</th><th></th></tr></thead>
+            <tbody id="ledger-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Simulated checkout (sim mode only) -->
+  <dialog id="sim-checkout" aria-labelledby="sim-title">
+    <form method="dialog" class="sim">
+      <p class="sim-eyebrow">Simulated PayPal checkout</p>
+      <h2 id="sim-title">Approve payment</h2>
+      <p class="sim-amount" id="sim-amount"></p>
+      <p class="muted small">Order <span id="sim-order" class="mono"></span>. This stands in for the PayPal sandbox popup when no keys are configured. Set <span class="mono">PAYPAL_MODE=sandbox</span> to use real PayPal.</p>
+      <div class="row">
+        <button class="btn primary" value="pay" id="sim-pay">Pay</button>
+        <button class="btn ghost" value="cancel">Cancel</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <script src="/static/app.js"></script>
+</body>
+</html>

@@ -26,6 +26,7 @@ class Settings:
     db_path: str
     policy_timezone: str
     catalog_path: str
+    autopay: str              # "auto" | "on" | "off"
 
 
 def get_settings() -> Settings:
@@ -40,4 +41,5 @@ def get_settings() -> Settings:
         db_path=os.getenv("DB_PATH", "agentpay.db"),
         policy_timezone=os.getenv("POLICY_TIMEZONE", "Asia/Kolkata"),
         catalog_path=os.getenv("CATALOG_PATH", str(APP_DIR / "data" / "catalog.json")),
+        autopay=os.getenv("AUTOPAY", "auto").lower(),
     )

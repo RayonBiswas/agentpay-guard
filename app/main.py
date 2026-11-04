@@ -51,6 +51,8 @@ def create_app(settings: Optional[Settings] = None, llm: Optional[LLMClient] = N
     ledger = ledger or Ledger(settings.db_path)
     llm = llm or LLMClient(settings.llm_base_url, settings.llm_model, settings.llm_api_key)
     paypal = paypal or make_backend(settings.paypal_mode, settings.paypal_client_id, settings.paypal_client_secret)
+    if autopay is None and settings.autopay in ("on", "off"):
+        autopay = settings.autopay == "on"
     svc = GuardService(settings, catalog, ledger, llm, paypal,
                        now_fn=now_fn or (lambda: datetime.now(timezone.utc)), autopay=autopay)
     agent_key = os.getenv("AGENT_API_KEY", "")
